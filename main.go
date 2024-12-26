@@ -38,10 +38,13 @@ func main () {
 	if port == "" {
 		port = "8080"
 	}
-}
 
 fmt.Printf("Starting server on port s%.....\n", port)
 
 // start the http server 
-if err := http.ListenAndServe(":"
-)
+if err := http.ListenAndServe(":"+port, nil); err !=nil {
+	 fmt.Printf("error starting server: %v\n", err)
+}
+}
+
+
