@@ -13,22 +13,26 @@ import (
 	"golang.org/x/exp/rand"
 )
 
+// command prefix to idetify gotrybot bot commands
 const prefix string = "!gotrybot"
 
 func main() {
-	// get token
+	// get environmental variables from a .env file
 	godotenv.Load()
 
-	// store environment variable for the token.
+	// retrieve the token from the environment.
 	token := os.Getenv("DISCORD_BOT_TOKEN")
 	if token == "" {
 		log.Fatal("No discord bot token provided. Set DISCORD_BOT_TOKEN environment")
 	}
+
+	// create a new discord session using bot token
 	sess, err := discordgo.New("Bot " + token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// add message handler for processing commands
 	sess.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		log.Println("Message received: ", m.Content)
 		if m.Author.ID == s.State.User.ID {
@@ -80,8 +84,11 @@ func main() {
 			s.ChannelMessageSendEmbed(m.ChannelID, &embed)
 		}
 	})
+
+	// set the bot's intents to listen for all non-priveleged events
 	sess.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
+	// start session to establish a connection with discord
 	err = sess.Open()
 	if err != nil {
 		log.Fatalf("Error in creating a discord bot session: %v", err)
